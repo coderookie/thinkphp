@@ -1,0 +1,33 @@
+create table think_categories(
+	cid mediumint unsigned not null auto_increment comment '分类ID',
+	name varchar(20) not null default '' comment '分类名称',
+	pid mediumint unsigned not null default 0 comment '父类ID',
+	level tinyint unsigned not null default 0 comment '分类等级',
+	created_time timestamp default current_timestamp comment '创建时间',
+	primary key(cid),
+	unique(name),
+	key(pid),
+	key(created_time)
+)engine=innodb default charset utf8 comment '分类表';
+
+create table think_news(
+	news_id int unsigned not null auto_increment comment '主键ID',
+	cid int unsigned not null default 0 comment '分类ID',
+	title varchar(50) not null default '' comment '标题',
+	author varchar(20) not null default '' comment '作者',
+	resource varchar(20) not null default '' comment '来源',
+	published_time datetime not null comment '新闻发布时间',
+	created_time timestamp not null default current_timestamp comment '创建时间',
+	primary key (news_id),
+	unique(title),
+	key(cid, published_time),
+	key(published_time)
+)engine=innodb default charset utf8 comment '新闻表';
+
+create table think_news_content(
+	id int unsigned not null auto_increment comment '主键ID',
+	news_id int unsigned not null default 0 comment '新闻唯一ID',
+	content text not null comment '新闻内容',
+	primary key(id),
+	unique(news_id)
+)engine=innodb default charset utf8 comment '新闻内容表';
