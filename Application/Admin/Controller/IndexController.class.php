@@ -5,7 +5,7 @@ use Think\Controller;
 class IndexController extends Controller{
     
     public function indexAction(){
-        $this->show('b');
+        $this->display();
     }
     
 }

@@ -109,10 +109,10 @@ return  array(
     'TMPL_ACTION_SUCCESS'   =>  THINK_PATH.'Tpl/dispatch_jump.tpl', // 默认成功跳转对应的模板文件
     'TMPL_EXCEPTION_FILE'   =>  THINK_PATH.'Tpl/think_exception.tpl',// 异常页面的模板文件
     'TMPL_DETECT_THEME'     =>  false,       // 自动侦测模板主题
-    'TMPL_TEMPLATE_SUFFIX'  =>  '.html',     // 默认模板文件后缀
+    'TMPL_TEMPLATE_SUFFIX'  =>  '.php',     // 默认模板文件后缀
     'TMPL_FILE_DEPR'        =>  '/', //模板文件CONTROLLER_NAME与ACTION_NAME之间的分割符
     // 布局设置
-    'TMPL_ENGINE_TYPE'      =>  'Think',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
+    'TMPL_ENGINE_TYPE'      =>  'php',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
     'TMPL_CACHFILE_SUFFIX'  =>  '.php',      // 默认模板缓存后缀
     'TMPL_DENY_FUNC_LIST'   =>  'echo,exit',    // 模板引擎禁用函数
     'TMPL_DENY_PHP'         =>  false, // 默认模板引擎是否禁用PHP原生代码
@@ -124,7 +124,7 @@ return  array(
     'TMPL_CACHE_PREFIX'     =>  '',         // 模板缓存前缀标识，可以动态改变
     'TMPL_CACHE_TIME'       =>  0,         // 模板缓存有效期 0 为永久，(以数字为值，单位:秒)
     'TMPL_LAYOUT_ITEM'      =>  '{__CONTENT__}', // 布局模板的内容替换标识
-    'LAYOUT_ON'             =>  true, // 是否启用布局
+    'LAYOUT_ON'             =>  false, // 是否启用布局
     'LAYOUT_NAME'           =>  'layout', // 当前布局名称 默认为layout
 
     // Think模板引擎标签库相关设定
@@ -141,7 +141,7 @@ return  array(
     'URL_PATHINFO_DEPR'     =>  '/',	// PATHINFO模式下，各参数之间的分割符号
     'URL_PATHINFO_FETCH'    =>  'ORIG_PATH_INFO,REDIRECT_PATH_INFO,REDIRECT_URL', // 用于兼容判断PATH_INFO 参数的SERVER替代变量列表
     'URL_REQUEST_URI'       =>  'REQUEST_URI', // 获取当前页面地址的系统变量 默认为REQUEST_URI
-    'URL_HTML_SUFFIX'       =>  'html',  // URL伪静态后缀设置
+    'URL_HTML_SUFFIX'       =>  '',  // URL伪静态后缀设置
     'URL_DENY_SUFFIX'       =>  'ico|png|gif|jpg', // URL禁止访问的后缀设置
     'URL_PARAMS_BIND'       =>  true, // URL变量绑定到Action方法参数
     'URL_PARAMS_BIND_TYPE'  =>  0, // URL变量绑定的类型 0 按变量名绑定 1 按变量顺序绑定

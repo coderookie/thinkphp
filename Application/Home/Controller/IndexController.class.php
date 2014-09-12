@@ -5,9 +5,9 @@ use Think\Controller;
 class IndexController extends Controller {
     
     public function indexAction(){
-        $news_model = D('news');
-        $news_lists = $news_model->getNewsLists();
-        $this->show();
+        //$news_model = D('news');
+        //$news_lists = $news_model->getNewsLists();
+        $this->show('a');
     }
     
     public function _empty(){
