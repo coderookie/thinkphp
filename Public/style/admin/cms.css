@@ -100,7 +100,7 @@ a { text-decoration: none;}
 .s_list01 li { display: inline-block; }
 * html .s_list01 li { height: 1%; }
 .s_list01 li { display: block; }
-.s_list01 li span{float:left; width:150px; text-align:right; line-height:22px;}
+.s_list01 li span{float:left; width:100px; text-align:left; line-height:22px; margin-left: 22px}
 .s_list02{padding-left:66px;}
 .s_list02 li{float:left; margin:5px 0; width:100%;}
 .s_list03{margin-top:10px;}
@@ -129,6 +129,8 @@ a { text-decoration: none;}
 /*Width*/
 .w450{width:450px;}
 .w462{width:462px;}
+.w200{width:200px}
+.w150{witdh:150px;}
 .w100{width:100px;}
 .w50{width:40px;}
 .h200{height:230px;}

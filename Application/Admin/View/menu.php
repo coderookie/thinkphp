@@ -14,10 +14,9 @@
 			<span>频道列表</span>
 			<em class="cur" onclick="Show_Hidden(mt0)">展开</em>
 		</div>
-		<div class="menu_content" id="mt0">
+		<div class="menu_content" id="mt0" <?php if($controller != 'index'): ?>style="display: none"<?php endif; ?>>
 			<ul class="menu_list">
 				<li><a href='#'>测试频道</a></li>
-
 			</ul>
 		</div>
 		<!-- menu list END -->
@@ -27,14 +26,10 @@
 			<span>分类管理</span>
 			<em onclick="Show_Hidden(mt1)" class="cur">展开</em>
 		</div>
-		<div class="menu_content" id="mt1" style="display:none;">
+		<div class="menu_content" id="mt1" <?php if($controller != 'categories'): ?>style="display:none;"<?php endif; ?>>
 			<ul class="menu_list">
+				<li><a href="<?php echo U('admin/categories/createoreditcategories'); ?>">添加分类</a></li>
 				<li><a href="<?php echo U('admin/categories/getcategorieslist'); ?>">分类列表</a></li>
-				<li><a href='#'>禁发词</a></li>
-				<li><a href='#'>关键词</a></li>
-				<li><a href='#'>栏目配置表</a></li>
-				<li><a href='#'>接口管理</a></li>
-				<li><a href='#'>系统通知</a></li>
 			</ul>
 		</div>
 		<!-- menu list END -->

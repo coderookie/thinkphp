@@ -42,7 +42,10 @@ abstract class Controller {
         }
     }
     
-    
+    /**
+     * 初始化函数
+     * @access protected
+     */
     protected function _initialize(){
         
     }

@@ -2,19 +2,11 @@
 <html>
 <head>
 	<meta charset="UTF-8" />
-	<title>乐居CMS系统</title>
+	<title>Thinkphp系统</title>
 	<link rel="stylesheet" type="text/css" href="/Public/style/admin/base.css" media="all">
 	<link rel="stylesheet" type="text/css" href="/Public/style/admin/cms.css" media="all">
-	
-    <script type="text/javascript">
-        function Show_Hidden(trid){
-            if(trid.style.display === "block" || trid.style.display === "" ){
-                trid.style.display = 'none';
-            }else{
-                trid.style.display = 'block';
-            }
-        }
-    </script>
+    <script src='/Public/js/common/jquery-2.1.0.min.js'></script>
+    <script src='/Public/js/common/common.js'></script>
 </head>
 <body>
 
