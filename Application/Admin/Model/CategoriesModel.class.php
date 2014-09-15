@@ -51,16 +51,26 @@ class CategoriesModel extends Model{
         return $categories_lists;
     }
     
+    /*
+     * @brief 返回私有属性
+     */
     public function getCategoriesList(){
         return $this->_categories;
     }
     
-    
+    /**
+     * @brief 递归得到所有分类的树形结构
+     *     取到顶级分类
+     *         循环, 将被循环的放入属性中, 将自己的cid传入该函数再循环
+     *         一直到没有子分类位置, 进入上一级循环
+     * @param type $pid 分类ID, 默认0, 顶级分类
+     * @return type see $this->getCategoriesList()
+     */
     public function getTotalCategories($pid = 0){
         // 得到全部父类
-        $top_categories = $this->getCategoriesByPid($pid);
-        if(!empty($top_categories)){
-            foreach($top_categories as $category){
+        $categories = $this->getCategoriesByPid($pid);
+        if(!empty($categories)){
+            foreach($categories as $category){
                 $this->_categories[] = $category;
                 $this->getTotalCategories($category['cid']);
             }
