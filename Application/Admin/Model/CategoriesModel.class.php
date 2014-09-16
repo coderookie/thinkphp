@@ -83,7 +83,7 @@ class CategoriesModel extends Model{
             //$this->execute('rollback');
             $return = array('status' => false, 'message' => '修改失败');
         }
-        //$this->execute('set autocommit = 1');
+        //  $this->execute('set autocommit = 1');
         return $return;
     }
     
@@ -95,12 +95,14 @@ class CategoriesModel extends Model{
      * @return type boolean
      */
     public function updateCategoriesLevel($cid){
-        // 修改当前分类的level
+        // 找到当前的分类记录
         $current_category = $this->getCategoryByCid($cid);
         
+        // 找到父分类的记录
         $pid = $current_category['pid'];   
         $parent_category = $this->getCategoryByCid($pid);
         
+        // 将当前分类的level修改等于父级分类level的值 + 1
         $data['cid'] = $cid;
         if(empty($parent_category)){
             $data['level'] = 1;
@@ -108,6 +110,7 @@ class CategoriesModel extends Model{
             $data['level'] = $parent_category['level'] + 1;
         }
  
+        // 修改
         $result = $this->save($data);
         
         if($result === false){
@@ -118,6 +121,7 @@ class CategoriesModel extends Model{
         $sub_categories = $this->getCategoriesByPid($cid);
         if(!empty($sub_categories)){
             foreach($sub_categories as $sub){
+                // 递归
                 $this->updateCategoriesLevel($sub['cid']);
             }
         }
