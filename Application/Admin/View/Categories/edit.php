@@ -18,8 +18,20 @@
         <form action="<?php echo U('admin/categories/createoreditcategories'); ?>" method='post'>
             <ul class="s_list01 clearfix">
                 <li>
+                    <span>目前父级分类：</span>
+                    <div class="cell">
+                        <?php if($parent_categories): ?>
+                        <?php foreach($parent_categories as $key => $parent): ?>
+                            <?php echo $parent['name']; ?> 
+                            <?php if(count($parent_categories) != ($key + 1)): ?>&gt;<?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </li>
+                <li>
                     <span>分类：</span>
                     <div class="cell">
+                        <input name='cid' type='hidden' value="<?php echo $category['cid']; ?>" />
                         <input name='pid' type='hidden' />
                         <select class="s_select mr10" onchange='get_sub_categories(this)'>
                             <option value='0'>请选择</option>
@@ -34,7 +46,7 @@
                 <li>
                     <span>分类名称：</span>
                     <div class="cell">
-                        <input name="name" type="text" class="s_input01 w200">
+                        <input name="name" type="text" class="s_input01 w200" value="<?php echo $category['name']; ?>">
                     </div>
                 </li>
                 <li>

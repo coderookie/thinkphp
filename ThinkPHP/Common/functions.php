@@ -1000,6 +1000,7 @@ function redirect($url, $time=0, $msg='') {
         if (0 === $time) {
             header('Location: ' . $url);
         } else {
+            header('Content-type: text/html; charset=utf-8');
             header("refresh:{$time};url={$url}");
             echo($msg);
         }

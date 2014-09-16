@@ -7,6 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="/Public/style/admin/cms.css" media="all">
     <script src='/Public/js/common/jquery-2.1.0.min.js'></script>
     <script src='/Public/js/common/common.js'></script>
+    <script src='/Public/js/admin/admin.js'></script>
 </head>
 <body>
 

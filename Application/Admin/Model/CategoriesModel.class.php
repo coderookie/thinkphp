@@ -9,7 +9,29 @@ use Think\Model;
  */
 class CategoriesModel extends Model{
     
+    // 属性结构的数组
     private $_categories = array();
+    
+    // 某个分类下的父级分类的数组
+    private $_parent_categories = array();
+    
+    
+    /**
+     * @brief 通过分类名称得到记录
+     * @param type $category_name   分类名称
+     * @param type $cid             分类ID, 如果传入, 则表示查询非此CID的分类名称等于$name的分类
+     * @return type array
+     */
+    public function getCategoryByName($category_name, $cid = false){
+        $where = sprintf("name = '%s'", $category_name);
+        if($cid){
+            $where .= sprintf(" and cid != %d", $cid);
+        }
+        $record = $this->where($where)->find();
+        //echo $this->getLastSql();die;
+        //echo $this->getDbError();die;
+        return $record;
+    }
     
     /**
      * @brief 增加分类, 如果父类的id是0(也就是添加的分类是顶级分类)或者已经传入level了, 就不用计算level
@@ -17,11 +39,89 @@ class CategoriesModel extends Model{
      * @return type last_insert_id
      */
     public function addCategories($data){
+        $record = $this->getCategoryByName($data['name']);
+        if(!empty($record)){
+            return array('status' => false, 'message' => '分类名称重复');
+        }
+        
         if(!empty($data['pid']) && empty($data['level'])){
             $category = $this->getCategoryByCid($data['pid']);
             $data['level'] = $category['level'] + 1;
         }
-        return $this->data($data)->add();
+        $last_insert_id = $this->data($data)->add();
+        if($last_insert_id){
+            return array('status' => true, 'message' => '添加成功');
+        }else{
+            return array('status' => false, 'message' => '添加失败');
+        }
+    }
+    
+    /**
+     * @biref 修改分类
+     *     修改分类名称
+     *     修改分类的父分类
+     *     修改父类下面子分类以及自己的level
+     * @param type $data 需要修改的内容
+     * @return type array
+     */
+    public function updateCategories($data){
+        $record = $this->getCategoryByName($data['name'], $data['cid']);
+        if(!empty($record)){
+            return array('status' => false, 'message' => '分类名称重复');
+        }
+        
+        // 修改分类时, 需要修改名称, 父级分类(pid), 以及level, 以及自己下面的子分类, 子分类的其他不变, 需要统一修改level
+        //$this->execute('set autocommit = 0');
+        
+        $category_result = $this->save($data);
+        $category_level_result = $this->updateCategoriesLevel($data['cid']);
+        
+        if($category_result && $category_level_result){
+            //$this->execute('commit');
+            $return = array('status' => true, 'message' => '修改成功');
+        }else{
+            //$this->execute('rollback');
+            $return = array('status' => false, 'message' => '修改失败');
+        }
+        //$this->execute('set autocommit = 1');
+        return $return;
+    }
+    
+    /**
+     * @brief 修改自己以及子分类的level
+     *     看下当前分类的父级分类, 将自己的level修改成父级分类的level + 1
+     *     然后得到当前分类的子分类, 递归此方法
+     * @param type $cid 分类ID
+     * @return type boolean
+     */
+    public function updateCategoriesLevel($cid){
+        // 修改当前分类的level
+        $current_category = $this->getCategoryByCid($cid);
+        
+        $pid = $current_category['pid'];   
+        $parent_category = $this->getCategoryByCid($pid);
+        
+        $data['cid'] = $cid;
+        if(empty($parent_category)){
+            $data['level'] = 1;
+        }else{
+            $data['level'] = $parent_category['level'] + 1;
+        }
+ 
+        $result = $this->save($data);
+        
+        if($result === false){
+            throw new Exception($this->getDbError());
+        }
+        
+        // 得到当前分类的所有子类
+        $sub_categories = $this->getCategoriesByPid($cid);
+        if(!empty($sub_categories)){
+            foreach($sub_categories as $sub){
+                $this->updateCategoriesLevel($sub['cid']);
+            }
+        }
+        return true;
     }
     
     /**
@@ -76,6 +176,30 @@ class CategoriesModel extends Model{
             }
         }
         return $this->getCategoriesList();
+    }
+    
+    /**
+     * @brief 删除分类
+     * @param type $cid 分类ID
+     * @return type 成功true 失败false
+     */
+    public function delCategories($cid){
+        return $this->where("cid = %d", $cid)->delete();
+    }
+    
+    /**
+     * @brief 得到某个分类的父级分类
+     * @param type $cid 分类ID
+     * @return type array
+     */
+    public function getParentCategories($cid){
+        $category = $this->getCategoryByCid($cid);
+        if($category){
+            $this->_parent_categories[] = $category;
+            return $this->getParentCategories($category['pid']);
+        }else{
+            return array_reverse($this->_parent_categories);
+        }
     }
     
 }
