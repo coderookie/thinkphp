@@ -58,14 +58,12 @@ class CategoriesController extends Controller{
             }
 
             if($return['status']){
-                //$this->redirect('admin/categories/getcategorieslist');
+                $this->redirect('admin/categories/getcategorieslist');
             }else{
-                /*
                 $this->error(
                     isset($return['message']) ? $return['message'] : '', 
                     '/admin/categories/' . ($cid ? 'getcategorieslist' : 'createoreditcategories')
                 );
-                */
             }
         }else{
             // 显示 增加 或者 编辑的模板
@@ -100,9 +98,17 @@ class CategoriesController extends Controller{
         // 得到请求的参数
         $cid = I('post.cid');
         
+        // 编辑的时候, 需要select联动, select里面不能出现被编辑自己的分类
+        $edit_cid = I('post.edit_cid');
+        
         // 得到传入分类下面的子分类
         $categories_model = D('categories');
-        $sub_categories = $categories_model->getCategoriesByPid($cid);
+        
+        if(!empty($edit_cid)){
+            $sub_categories = $categories_model->getSubCategories($cid, $edit_cid);
+        }else{
+            $sub_categories = $categories_model->getCategoriesByPid($cid);
+        }
         
         return $this->ajaxReturn($sub_categories);
     }

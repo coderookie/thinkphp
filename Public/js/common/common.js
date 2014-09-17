@@ -1,4 +1,4 @@
-function get_sub_categories(obj){
+function get_sub_categories(obj, edit_cid){
         
     $(obj).next().remove();
 
@@ -30,15 +30,21 @@ function get_sub_categories(obj){
         return false;
     }
 
+    var data = '';
+    data += 'cid=' + cid;
+    if(edit_cid){
+        data += '&edit_cid=' + edit_cid;
+    }
+
     $.ajax({
         type: 'post',
         url: '/admin/categories/getsubcategories',
         dataType: 'json',
-        data: 'cid=' + cid,
+        data: data,
         success: function(response){
             if(response){
                 var html = "";
-                html += '<select class="s_select mr10" onchange=get_sub_categories(this)>';
+                html += "<select class='s_select mr10' onchange='get_sub_categories(this, "+edit_cid+")'>";
                 html += "<option value='0'>请选择</option>";
                 for(var i = 0; i < response.length; i++){
                     html += "<option value='" + response[i].cid + "'>" + response[i].name + "</option>";

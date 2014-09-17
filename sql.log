@@ -1,33 +1,85 @@
-create table think_categories(
-	cid mediumint unsigned not null auto_increment comment 'ÂàÜÁ±ªID',
-	name varchar(20) not null default '' comment 'ÂàÜÁ±ªÂêçÁß∞',
-	pid mediumint unsigned not null default 0 comment 'Áà∂Á±ªID',
-	level tinyint unsigned not null default 0 comment 'ÂàÜÁ±ªÁ≠âÁ∫ß',
-	created_time timestamp default current_timestamp comment 'ÂàõÂª∫Êó∂Èó¥',
-	primary key(cid),
-	unique(name),
-	key(pid),
-	key(created_time)
-)engine=innodb default charset utf8 comment 'ÂàÜÁ±ªË°®';
+-- MySQL dump 10.13  Distrib 5.1.73, for Win64 (unknown)
+--
+-- Host: localhost    Database: replication
+-- ------------------------------------------------------
+-- Server version	5.1.73-community-log
 
-create table think_news(
-	news_id int unsigned not null auto_increment comment '‰∏ªÈîÆID',
-	cid int unsigned not null default 0 comment 'ÂàÜÁ±ªID',
-	title varchar(50) not null default '' comment 'Ê†áÈ¢ò',
-	author varchar(20) not null default '' comment '‰ΩúËÄÖ',
-	resource varchar(20) not null default '' comment 'Êù•Ê∫ê',
-	published_time datetime not null comment 'Êñ∞ÈóªÂèëÂ∏ÉÊó∂Èó¥',
-	created_time timestamp not null default current_timestamp comment 'ÂàõÂª∫Êó∂Èó¥',
-	primary key (news_id),
-	unique(title),
-	key(cid, published_time),
-	key(published_time)
-)engine=innodb default charset utf8 comment 'Êñ∞ÈóªË°®';
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-create table think_news_content(
-	id int unsigned not null auto_increment comment '‰∏ªÈîÆID',
-	news_id int unsigned not null default 0 comment 'Êñ∞ÈóªÂîØ‰∏ÄID',
-	content text not null comment 'Êñ∞ÈóªÂÜÖÂÆπ',
-	primary key(id),
-	unique(news_id)
-)engine=innodb default charset utf8 comment 'Êñ∞ÈóªÂÜÖÂÆπË°®';
+--
+-- Table structure for table `think_categories`
+--
+
+DROP TABLE IF EXISTS `think_categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `think_categories` (
+  `cid` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '∑÷¿‡ID',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '∑÷¿‡√˚≥∆',
+  `pid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '∏∏¿‡ID',
+  `level` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '¥¥Ω® ±º‰',
+  PRIMARY KEY (`cid`),
+  UNIQUE KEY `name` (`name`),
+  KEY `pid` (`pid`),
+  KEY `created_time` (`created_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COMMENT='∑÷¿‡±Ì';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `think_news`
+--
+
+DROP TABLE IF EXISTS `think_news`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `think_news` (
+  `news_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '÷˜º¸ID',
+  `cid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '∑÷¿‡ID',
+  `title` varchar(50) NOT NULL DEFAULT '' COMMENT '±ÍÃ‚',
+  `author` varchar(20) NOT NULL DEFAULT '' COMMENT '◊˜’ﬂ',
+  `resource` varchar(20) NOT NULL DEFAULT '' COMMENT '¿¥‘¥',
+  `published_time` datetime NOT NULL COMMENT '–¬Œ≈∑¢≤º ±º‰',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '¥¥Ω® ±º‰',
+  PRIMARY KEY (`news_id`),
+  UNIQUE KEY `title` (`title`),
+  KEY `cid` (`cid`,`published_time`),
+  KEY `published_time` (`published_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='–¬Œ≈±Ì';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `think_news_content`
+--
+
+DROP TABLE IF EXISTS `think_news_content`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `think_news_content` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '÷˜º¸ID',
+  `news_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '–¬Œ≈Œ®“ªID',
+  `content` text NOT NULL COMMENT '–¬Œ≈ƒ⁄»›',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `news_id` (`news_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='–¬Œ≈ƒ⁄»›±Ì';
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2014-09-17 17:03:22

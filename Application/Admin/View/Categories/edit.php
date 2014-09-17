@@ -33,7 +33,7 @@
                     <div class="cell">
                         <input name='cid' type='hidden' value="<?php echo $category['cid']; ?>" />
                         <input name='pid' type='hidden' />
-                        <select class="s_select mr10" onchange='get_sub_categories(this)'>
+                        <select class="s_select mr10" onchange="get_sub_categories(this, <?php echo $category['cid']; ?>)">
                             <option value='0'>请选择</option>
                             <?php if(!empty($top_categories)): ?>
                             <?php foreach($top_categories as $top_c): ?>

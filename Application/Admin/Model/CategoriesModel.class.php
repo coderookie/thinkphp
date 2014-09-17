@@ -61,71 +61,80 @@ class CategoriesModel extends Model{
      *     修改分类名称
      *     修改分类的父分类
      *     修改父类下面子分类以及自己的level
+     * @notice 
+     *     由于需要先修改自己的name跟pid(update), 再去后去修改分类后新父级分类的level(select)
+     *     此时用到事务, 未commit的时候. 不会写入到binlog中, select取不到最新的数据
+     *     切换数据库, 将DB_CONFIG2设置为主库, 则以后用$this->db(2)的都是主库
      * @param type $data 需要修改的内容
      * @return type array
      */
     public function updateCategories($data){
+        // 切换数据库 切换到主库, 解决master 与 slave 在事务中存在的问题
+        $this->db(2, DB_CONFIG2);
+        
         $record = $this->getCategoryByName($data['name'], $data['cid']);
         if(!empty($record)){
             return array('status' => false, 'message' => '分类名称重复');
         }
         
         // 修改分类时, 需要修改名称, 父级分类(pid), 以及level, 以及自己下面的子分类, 子分类的其他不变, 需要统一修改level
-        //$this->execute('set autocommit = 0');
+        $this->db(2)->execute('start transaction');
         
-        $category_result = $this->save($data);
+        // 先修改名称, pid
+        $category_result = $this->db(2)->save($data);
+        
+        // 修改子分类的level
         $category_level_result = $this->updateCategoriesLevel($data['cid']);
         
-        if($category_result && $category_level_result){
-            //$this->execute('commit');
+        if($category_result !== false && $category_level_result !== false){
+            $this->db(2)->execute('commit');
             $return = array('status' => true, 'message' => '修改成功');
         }else{
-            //$this->execute('rollback');
+            $this->db(2)->execute('rollback');
             $return = array('status' => false, 'message' => '修改失败');
         }
-        //  $this->execute('set autocommit = 1');
         return $return;
     }
-    
+
     /**
-     * @brief 修改自己以及子分类的level
-     *     看下当前分类的父级分类, 将自己的level修改成父级分类的level + 1
-     *     然后得到当前分类的子分类, 递归此方法
+     * @brief 修改被修改分类以及子分类的level
+     *     得到修改前分类与修改后分类的level之间的差值
+     *     得到所有子分类的cid以及自己的cid
+     *     统一修改level
      * @param type $cid 分类ID
-     * @return type boolean
+     * @return boolean
      */
     public function updateCategoriesLevel($cid){
-        // 找到当前的分类记录
-        $current_category = $this->getCategoryByCid($cid);
+        // 获取被修改的分类记录
+        $current_category = $this->getCategoryByCidFromMaster($cid);
+        $pid = $current_category['pid'];
         
-        // 找到父分类的记录
-        $pid = $current_category['pid'];   
-        $parent_category = $this->getCategoryByCid($pid);
+        // 获取修改后父类的level
+        $parent_category = $this->getCategoryByCidFromMaster($pid);
+        $level = !empty($parent_category) ? $parent_category['level'] : 1;
         
-        // 将当前分类的level修改等于父级分类level的值 + 1
-        $data['cid'] = $cid;
-        if(empty($parent_category)){
-            $data['level'] = 1;
-        }else{
-            $data['level'] = $parent_category['level'] + 1;
-        }
- 
-        // 修改
-        $result = $this->save($data);
+        // 计算修改后的level 与 修改之前的level之间的差值, 修改后的level = 父类的level + 1
+        $level_diff = $level + 1 - $current_category['level'];
         
-        if($result === false){
-            throw new Exception($this->getDbError());
-        }
-        
-        // 得到当前分类的所有子类
-        $sub_categories = $this->getCategoriesByPid($cid);
+        // 找到被修改分类的全部子类的ID
+        $cids = array();
+        $sub_categories = $this->getTotalCategories($cid);
         if(!empty($sub_categories)){
-            foreach($sub_categories as $sub){
-                // 递归
-                $this->updateCategoriesLevel($sub['cid']);
+            foreach($sub_categories as $value){
+                $cids[] = $value['cid'];
             }
         }
-        return true;
+        
+        array_push($cids, $cid);
+        // 修改被修改的分类, 以及子类的level
+        $result = $this->db(2)->where(sprintf("cid in (%s)", implode(',', $cids)))->setInc('level', $level_diff);
+        //echo $this->getLastSql();die;
+        
+        if($result !== false){
+            return true;
+        }else{
+            return false;
+        }
     }
     
     /**
@@ -135,6 +144,14 @@ class CategoriesModel extends Model{
      */
     public function getCategoryByCid($cid){
         return $this->find($cid);
+    }
+    
+    /**
+     * @brief 通过主键得到记录, 从master上得到记录
+     * @param type $cid 分类ID
+     */
+    public function getCategoryByCidFromMaster($cid){
+        return $this->db(2)->find($cid);
     }
     
     /**
@@ -153,6 +170,15 @@ class CategoriesModel extends Model{
         }
         //echo $this->getLastSql();die;
         return $categories_lists;
+    }
+    
+    public function getSubCategories($cid, $edit_cid = false){
+        $where = '';
+        $where .= sprintf("pid = %d", $cid);
+        if(!empty($edit_cid)){
+            $where .= sprintf(" and cid != %d", $edit_cid);
+        }
+        return $this->where($where)->order('cid desc')->select();
     }
     
     /*
